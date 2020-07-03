@@ -43,17 +43,22 @@ exports.dialogflowWebhook = functions.https.onRequest(
 
     async function userOnboardingHandler(agent) {
       const db = admin.firestore();
-      const profile = db.collection('users').doc('Henry');
+      const profile = db.collection('users').doc('henry');
 
       const { name, color } = result.parameters;
 
-      await profile.set({ name, color });
+      try {
+        await profile.set({ name, color });
+      } catch (e) {
+        console.log('error in final user response:', e);
+      }
+
       agent.add(`Welcome aboard ${name}!`);
     }
 
     let intentMap = new Map();
     intentMap.set('Default Welcome Intent', welcome);
     intentMap.set('Default Fallback Intent', fallback);
-    intentMap.set('UserOnboarding', userOnboardingHandler);
+    intentMap.set('UpdateProfile', userOnboardingHandler);
   }
 );
