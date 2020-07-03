@@ -41,7 +41,7 @@ exports.dialogflowWebhook = functions.https.onRequest(
       agent.add(`Sorry, can you try again?`);
     }
 
-    async function userOnboardingHandler(agent) {
+    async function updateProfileHandler(agent) {
       const db = admin.firestore();
       const profile = db.collection('users').doc('henry');
 
@@ -59,6 +59,6 @@ exports.dialogflowWebhook = functions.https.onRequest(
     let intentMap = new Map();
     intentMap.set('Default Welcome Intent', welcome);
     intentMap.set('Default Fallback Intent', fallback);
-    intentMap.set('UpdateProfile', userOnboardingHandler);
+    intentMap.set('UpdateProfile', updateProfileHandler);
   }
 );
