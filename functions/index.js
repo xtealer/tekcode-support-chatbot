@@ -34,7 +34,9 @@ exports.dialogflowWebhook = functions.https.onRequest(
     const result = request.body.queryResult;
 
     function welcome(agent) {
-      agent.add(`Welcome to Tek Code Customer Support!`);
+      agent.add(
+        `Welcome to Tek Code Customer Support!\n You can request the following actions:\n 1. Update your profile`
+      );
     }
 
     function fallback(agent) {
@@ -53,12 +55,13 @@ exports.dialogflowWebhook = functions.https.onRequest(
         console.log('error in final user response:', e);
       }
 
-      agent.add(`Welcome aboard ${name}!`);
+      agent.add(`Welcome aboard ${color}-${name}!`);
     }
 
     let intentMap = new Map();
     intentMap.set('Default Welcome Intent', welcome);
     intentMap.set('Default Fallback Intent', fallback);
     intentMap.set('UpdateProfile', updateProfileHandler);
+    agent.handleRequest(intentMap);
   }
 );
