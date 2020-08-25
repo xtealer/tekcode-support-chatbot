@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { v4 as uuidv4 } from 'uuid';
 
-const dialogflowURL =
-  'https://us-central1-supportbot-apmvng.cloudfunctions.net/dialogflowGateway';
+const dialogflowURL = 'https://us-central1-tek-code.cloudfunctions.net/dialogflowGateway';
 
 @Component({
   selector: 'app-chatbot',
@@ -16,16 +15,20 @@ export class ChatbotComponent implements OnInit {
 
   sessionId = uuidv4();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   ngOnInit() {
-    this.addBotMessage('Human presence detected 🤖. How can I help you?');
+    this.addBotMessage(`Bienvenido a soporte de TekCode, tiene a disposicion las siguientes opciones:
+
+    1. Contacto para proyectos.
+    2. Que es Tek-Code?
+    3. Crear perfil de cliente.`);
   }
 
   addUserMessage(text) {
     this.messages.push({
       text,
-      sender: 'You',
+      sender: 'Tu',
       reply: true,
       date: new Date(),
     });
@@ -34,7 +37,7 @@ export class ChatbotComponent implements OnInit {
   addBotMessage(text) {
     this.messages.push({
       text,
-      sender: 'Bot',
+      sender: 'Robot',
       avatar: '/assets/bot.png',
       date: new Date(),
     });
@@ -52,7 +55,7 @@ export class ChatbotComponent implements OnInit {
         queryInput: {
           text: {
             text,
-            languageCode: 'en-US',
+            languageCode: 'es',
           },
         },
       })

@@ -1,11 +1,11 @@
 const functions = require('firebase-functions');
 const cors = require('cors')({ origin: true });
 const admin = require('firebase-admin');
-const serviceAccount = require('./supportbot-service-account.json');
+const serviceAccount = require('./tekcode.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://supportbot-apmvng.firebaseio.com',
+  databaseURL: 'https://tek-code.firebaseio.com/',
 });
 
 const { SessionsClient } = require('dialogflow');
@@ -15,7 +15,7 @@ exports.dialogflowGateway = functions.https.onRequest((request, response) => {
     const { queryInput, sessionId } = request.body;
 
     const sessionClient = new SessionsClient({ credentials: serviceAccount });
-    const session = sessionClient.sessionPath('supportbot-apmvng', sessionId);
+    const session = sessionClient.sessionPath('tek-code', sessionId);
 
     const responses = await sessionClient.detectIntent({ session, queryInput });
 
@@ -35,7 +35,11 @@ exports.dialogflowWebhook = functions.https.onRequest(
 
     function welcome(agent) {
       agent.add(
-        `Welcome to Tek Code Customer Support!\n You can request the following actions:\n 1. Update your profile`
+        `Bienvenido a soporte de TekCode, tiene a disposicion las siguientes opciones:
+
+    1. Contacto para proyectos.
+    2. Que es Tek-Code?
+    3. Crear perfil de cliente.`
       );
     }
 
@@ -47,21 +51,21 @@ exports.dialogflowWebhook = functions.https.onRequest(
       const db = admin.firestore();
       const profile = db.collection('users').doc('henry');
 
-      const { name, color } = result.parameters;
+      const { fullname } = result.parameters;
 
       try {
-        await profile.set({ name, color });
+        await profile.set({ fullname });
       } catch (e) {
         console.log('error in final user response:', e);
       }
 
-      agent.add(`Welcome aboard ${color}-${name}!`);
+      agent.add(`Hemos recibido su mensaje, pronto nos pondremos en contacto!`);
     }
 
     let intentMap = new Map();
     intentMap.set('Default Welcome Intent', welcome);
     intentMap.set('Default Fallback Intent', fallback);
-    intentMap.set('UpdateProfile', updateProfileHandler);
+    intentMap.set('ProjectsContact', updateProfileHandler);
     agent.handleRequest(intentMap);
   }
 );
